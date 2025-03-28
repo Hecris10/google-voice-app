@@ -1,18 +1,90 @@
-# Create T3 App
+# Voice App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+## Getting Started
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+### Prerequisites
+
+- [Bun](https://bun.sh/) - Fast all-in-one JavaScript runtime & toolkit
+  - If you don't have Bun installed, please visit [https://bun.sh](https://bun.sh) for installation instructions
+
+### Installation
+
+1. Install dependencies:
+```bash
+bun install
+```
+
+2. Set up your environment variables:
+
+Create a `.env` file in the root directory with the following variables based on the schema defined in `src/env.js`:
+
+```bash
+# Database connection URL (Required for Prisma)
+DATABASE_URL="your_database_url"
+
+# Authentication secret key for BetterAuth.js
+BETTER_AUTH_SECRET="your_secret_key"
+
+# Base URL of your application (e.g., http://localhost:3000 for development)
+BASE_URL="your_base_url"
+
+# Google OAuth credentials (Required for Google authentication)
+GOOGLE_CLIENT_ID="your_google_client_id"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
+
+# Node environment (development, test, or production)
+NODE_ENV="development"
+```
+
+Note: Make sure to replace the placeholder values with your actual configuration. The schema validation will ensure all required variables are properly set.
+
+### Database Setup
+
+This project uses Prisma as the ORM. Here are the available database commands:
+
+```bash
+# Generate Prisma Client and create migrations
+bun db:generate
+
+# Apply migrations to the database
+bun db:migrate
+
+# Push schema changes directly to the database
+bun db:push
+
+# Open Prisma Studio to manage your data
+bun db:studio
+```
+
+### Development
+
+Run the development server:
+
+```bash
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+### Build
+
+Create a production build:
+
+```bash
+bun run build
+```
+
+## Tech Stack
 
 If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
 - [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
+- [BetterAuth.js](https://www.better-auth.com/)
 - [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
 - [Tailwind CSS](https://tailwindcss.com)
+- [ShadCN UI](https://ui.shadcn.com/)
 - [tRPC](https://trpc.io)
 
 ## Learn More

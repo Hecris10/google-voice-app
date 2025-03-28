@@ -15,7 +15,7 @@ export const auth = betterAuth({
       clientSecret: `${process.env.GOOGLE_CLIENT_SECRET}`,
     },
   },
-  baseUrl: process.env.BETTER_AUTH_URL,
+  baseUrl: process.env.BASE_URL,
 });
 
 export type Session = typeof auth.$Infer.Session;
