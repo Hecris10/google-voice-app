@@ -22,51 +22,45 @@ steps:
         npm install -g prisma
         npx prisma generate
         npm run build
-  - name: gcr.io/k8s-skaffold/pack
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: Build Image
     args:
       - build
+      - '-t'
       - >-
         $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
-      - '--builder=gcr.io/buildpacks/builder:v1'
-      - '--network=cloudbuild'
-      - '--path=.'
-      - '--env=BUN_RUNTIME=1'
-      - '--env=NODE_ENV=production'
-      - '--env=DATABASE_URL=${_DATABASE_URL}'
-      - '--env=BETTER_AUTH_SECRET=${_BETTER_AUTH_SECRET}'
-      - '--env=BASE_URL=${_BASE_URL}'
-      - '--env=GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID}'
-      - '--env=GOOGLE_CLIENT_SECRET=${_GOOGLE_CLIENT_SECRET}'
-      - '--env=PRISMA_GENERATE=true'
-    id: Buildpack
-    entrypoint: pack
+      - .
+
   - name: gcr.io/cloud-builders/docker
+    id: Push
     args:
       - push
       - >-
         $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
-    id: Push
+
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: Deploy
+    entrypoint: gcloud
     args:
       - run
       - services
       - update
       - $_SERVICE_NAME
       - '--platform=managed'
-      - >-
-        --image=$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+      - '--region=$_DEPLOY_REGION'
+      - '--image=$_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '--quiet'
       - >-
         --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
-      - '--region=$_DEPLOY_REGION'
-      - '--quiet'
-    id: Deploy
-    entrypoint: gcloud
+
 images:
-  - >-
-    $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+  - $_AR_HOSTNAME/$_AR_PROJECT_ID/$_AR_REPOSITORY/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA
+
 options:
   substitutionOption: ALLOW_LOOSE
   logging: CLOUD_LOGGING_ONLY
+
 substitutions:
   _AR_PROJECT_ID: voice-app-455102
   _PLATFORM: managed
@@ -75,6 +69,7 @@ substitutions:
   _AR_HOSTNAME: us-central1-docker.pkg.dev
   _TRIGGER_ID: 2226a8cd-ec2f-48a4-94d7-3d8ea0c5aab0
   _AR_REPOSITORY: cloud-run-source-deploy
+
 tags:
   - gcp-cloud-build-deploy-cloud-run
   - gcp-cloud-build-deploy-cloud-run-managed
