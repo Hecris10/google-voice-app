@@ -59,7 +59,7 @@ images:
 
 options:
   substitutionOption: ALLOW_LOOSE
-  logging: CLOUD_LOGGING_ONLY
+  logging: CLOUD_LOGGING_ONLY # This is the important line.
 
 substitutions:
   _AR_PROJECT_ID: voice-app-455102
